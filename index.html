@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여행 준비물 체크리스트</title>
+<style>
+  :root {
+    --bg-grad-1: #667eea;
+    --bg-grad-2: #764ba2;
+    --card: #ffffff;
+    --text: #2d2d44;
+    --text-soft: #8a8aa3;
+    --text-mute: #b0b2c4;
+    --border: #edeef5;
+    --hover: #f7f8fc;
+    --accent: #667eea;
+    --accent-hover: #5568d3;
+    --chip: #f0f1f8;
+  }
+
+  [data-theme="dark"] {
+    --bg-grad-1: #232338;
+    --bg-grad-2: #10101c;
+    --card: #1e1e2e;
+    --text: #e8e9f3;
+    --text-soft: #9a9ab5;
+    --text-mute: #6a6a85;
+    --border: #33334a;
+    --hover: #26263a;
+    --accent: #8b9dff;
+    --accent-hover: #a3b1ff;
+    --chip: #2a2a40;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+    transition: background 0.3s;
+  }
+
+  .app {
+    background: var(--card);
+    width: 100%;
+    max-width: 460px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .header {
+    padding: 24px 28px 20px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .theme-btn {
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .theme-btn:hover {
+    border-color: var(--accent);
+  }
+
+  /* D-day */
+  .dday-row {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .dday-row input[type="date"] {
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    color-scheme: light;
+  }
+  [data-theme="dark"] .dday-row input[type="date"] {
+    color-scheme: dark;
+  }
+  .dday-row input[type="date"]:focus {
+    border-color: var(--accent);
+  }
+  .dday-badge {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, var(--accent), var(--bg-grad-2));
+    padding: 8px 14px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .dday-badge.empty {
+    background: var(--chip);
+    color: var(--text-mute);
+    font-weight: 500;
+  }
+  .dday-badge.past {
+    background: var(--chip);
+    color: var(--text-soft);
+  }
+
+  .progress-text {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--text-soft);
+  }
+
+  .progress-text b {
+    color: var(--accent);
+  }
+
+  .progress-bar {
+    margin-top: 12px;
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--bg-grad-2));
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  /* 프리셋 */
+  .presets {
+    padding: 0 28px 16px;
+  }
+  .presets .label-sm {
+    font-size: 12px;
+    color: var(--text-mute);
+    margin-bottom: 8px;
+  }
+  .preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .preset-chips button {
+    border: none;
+    background: var(--chip);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 99px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preset-chips button:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* 입력 */
+  .input-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 28px 16px;
+  }
+  .input-row select {
+    padding: 12px 8px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+  }
+  .input-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-row input:focus,
+  .input-row select:focus {
+    border-color: var(--accent);
+  }
+  .input-row button {
+    padding: 0 20px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .input-row button:hover {
+    background: var(--accent-hover);
+  }
+
+  /* 목록 (카테고리 그룹) */
+  .list {
+    padding: 0 16px 24px;
+    max-height: 48vh;
+    overflow-y: auto;
+  }
+  .group-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-soft);
+    padding: 14px 12px 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  ul {
+    list-style: none;
+  }
+  li.item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 12px;
+    transition: background 0.15s;
+  }
+  li.item:hover {
+    background: var(--hover);
+  }
+  li.item .check {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--text-mute);
+    border-radius: 7px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  li.item.done .check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  li.item .check::after {
+    content: "✔";
+    color: #fff;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  li.item.done .check::after {
+    opacity: 1;
+  }
+  li.item .label {
+    flex: 1;
+    font-size: 15px;
+    color: var(--text);
+    cursor: text;
+    word-break: break-all;
+  }
+  li.item.done .label {
+    text-decoration: line-through;
+    color: var(--text-mute);
+  }
+  li.item .edit-input {
+    flex: 1;
+    font-size: 15px;
+    padding: 4px 8px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+  }
+  li.item .delete {
+    border: none;
+    background: transparent;
+    color: var(--text-mute);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  li.item .delete:hover {
+    background: #ffe5e5;
+    color: #ff5d5d;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 14px;
+    padding: 30px 0;
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="header-top">
+        <h1>🧳 여행 준비물</h1>
+        <button class="theme-btn" id="themeBtn" title="다크모드 전환">🌙</button>
+      </div>
+      <div class="dday-row">
+        <input type="date" id="tripDate">
+        <span class="dday-badge" id="ddayBadge">여행 날짜를 선택하세요</span>
+      </div>
+
+      <p class="progress-text"><b id="doneCount">0</b>개 중 <b id="totalCount">0</b>개 완료</p>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="presets">
+      <p class="label-sm">템플릿 불러오기</p>
+      <div class="preset-chips" id="presetChips"></div>
+    </div>
+
+    <div class="input-row">
+      <select id="categorySelect"></select>
+      <input type="text" id="itemInput" placeholder="항목 입력..." maxlength="50">
+      <button id="addBtn">추가</button>
+    </div>
+
+    <div class="list" id="list"></div>
+  </div>
+
+<script>
+  /* ===== 설정 ===== */
+  // 카테고리 순서 + 아이콘
+  const CATEGORIES = [
+    { key: '서류',     icon: '📄' },
+    { key: '전자기기', icon: '🔌' },
+    { key: '의류',     icon: '👕' },
+    { key: '세면도구', icon: '🧴' },
+    { key: '기타',     icon: '📦' },
+  ];
+
+  // 프리셋(템플릿) — { 라벨: [ [항목, 카테고리], ... ] }
+  const PRESETS = {
+    '✈️ 해외': [
+      ['여권', '서류'], ['비자', '서류'], ['항공권 / e-티켓', '서류'], ['여행자보험', '서류'],
+      ['휴대폰 충전기', '전자기기'], ['보조배터리', '전자기기'], ['멀티 어댑터', '전자기기'],
+      ['겉옷', '의류'], ['속옷', '의류'], ['양말', '의류'],
+      ['칫솔 / 치약', '세면도구'], ['선크림', '세면도구'],
+      ['상비약', '기타'], ['환전한 현금', '기타'],
+    ],
+    '🚗 국내': [
+      ['신분증', '서류'], ['숙소 예약 확인', '서류'],
+      ['휴대폰 충전기', '전자기기'], ['보조배터리', '전자기기'],
+      ['갈아입을 옷', '의류'], ['속옷', '의류'],
+      ['칫솔 / 치약', '세면도구'], ['세안용품', '세면도구'],
+      ['상비약', '기타'], ['간식', '기타'],
+    ],
+    '🏕️ 캠핑': [
+      ['예약 확인서', '서류'],
+      ['랜턴', '전자기기'], ['보조배터리', '전자기기'],
+      ['방한 자켓', '의류'], ['여벌 양말', '의류'],
+      ['물티슈', '세면도구'], ['수건', '세면도구'],
+      ['텐트', '기타'], ['침낭', '기타'], ['버너 / 코펠', '기타'], ['모기 기피제', '기타'],
+    ],
+    '💼 출장': [
+      ['신분증 / 여권', '서류'], ['명함', '서류'], ['출장 일정표', '서류'],
+      ['노트북 + 충전기', '전자기기'], ['휴대폰 충전기', '전자기기'], ['보조배터리', '전자기기'],
+      ['정장 / 셔츠', '의류'], ['여벌 속옷', '의류'],
+      ['칫솔 / 치약', '세면도구'], ['면도기', '세면도구'],
+      ['상비약', '기타'],
+    ],
+  };
+
+  const STORAGE_KEY = 'travel-checklist';
+  const THEME_KEY = 'travel-checklist-theme';
+  const DATE_KEY = 'travel-checklist-date';
+
+  /* ===== 상태 ===== */
+  let items = load();          // { text, done, category }
+  let editingIndex = -1;       // 인라인 수정 중인 항목 인덱스
+
+  /* ===== DOM ===== */
+  const input = document.getElementById('itemInput');
+  const addBtn = document.getElementById('addBtn');
+  const listEl = document.getElementById('list');
+  const doneCountEl = document.getElementById('doneCount');
+  const totalCountEl = document.getElementById('totalCount');
+  const progressFill = document.getElementById('progressFill');
+  const presetChips = document.getElementById('presetChips');
+  const categorySelect = document.getElementById('categorySelect');
+  const themeBtn = document.getElementById('themeBtn');
+  const tripDate = document.getElementById('tripDate');
+  const ddayBadge = document.getElementById('ddayBadge');
+
+  /* ===== 저장 / 불러오기 ===== */
+  function load() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  /* ===== 초기 UI 구성 ===== */
+  // 카테고리 선택 옵션
+  CATEGORIES.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.key;
+    opt.textContent = c.icon + ' ' + c.key;
+    categorySelect.appendChild(opt);
+  });
+
+  // 프리셋 칩
+  Object.keys(PRESETS).forEach(name => {
+    const btn = document.createElement('button');
+    btn.textContent = name;
+    btn.addEventListener('click', () => loadPreset(name));
+    presetChips.appendChild(btn);
+  });
+
+  /* ===== 렌더링 ===== */
+  function render() {
+    listEl.innerHTML = '';
+
+    if (items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = '아직 항목이 없어요. 템플릿을 불러오거나 직접 추가해 보세요!';
+      listEl.appendChild(empty);
+      updateProgress();
+      return;
+    }
+
+    // 카테고리별 그룹 렌더
+    CATEGORIES.forEach(cat => {
+      const groupItems = items
+        .map((item, index) => ({ item, index }))
+        .filter(x => x.item.category === cat.key);
+
+      if (groupItems.length === 0) return;
+
+      const title = document.createElement('div');
+      title.className = 'group-title';
+      title.textContent = cat.icon + ' ' + cat.key;
+      listEl.appendChild(title);
+
+      const ul = document.createElement('ul');
+      groupItems.forEach(({ item, index }) => {
+        ul.appendChild(renderItem(item, index));
+      });
+      listEl.appendChild(ul);
+    });
+
+    updateProgress();
+  }
+
+  function renderItem(item, index) {
+    const li = document.createElement('li');
+    li.className = 'item' + (item.done ? ' done' : '');
+
+    const check = document.createElement('div');
+    check.className = 'check';
+    check.addEventListener('click', () => toggle(index));
+    li.appendChild(check);
+
+    if (editingIndex === index) {
+      // 수정 모드
+      const edit = document.createElement('input');
+      edit.className = 'edit-input';
+      edit.type = 'text';
+      edit.value = item.text;
+      edit.maxLength = 50;
+      edit.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') commitEdit(index, edit.value);
+        if (e.key === 'Escape') { editingIndex = -1; render(); }
+      });
+      edit.addEventListener('blur', () => commitEdit(index, edit.value));
+      li.appendChild(edit);
+      // 커서 포커스는 렌더 후 처리
+      setTimeout(() => { edit.focus(); edit.select(); }, 0);
+    } else {
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = item.text;
+      label.title = '클릭하면 수정';
+      label.addEventListener('click', () => { editingIndex = index; render(); });
+      li.appendChild(label);
+    }
+
+    const del = document.createElement('button');
+    del.className = 'delete';
+    del.textContent = '✕';
+    del.addEventListener('click', () => remove(index));
+    li.appendChild(del);
+
+    return li;
+  }
+
+  function updateProgress() {
+    const total = items.length;
+    const done = items.filter(i => i.done).length;
+    doneCountEl.textContent = done;
+    totalCountEl.textContent = total;
+    progressFill.style.width = total === 0 ? '0%' : (done / total * 100) + '%';
+  }
+
+  /* ===== 동작 ===== */
+  function addItem() {
+    const text = input.value.trim();
+    if (!text) return;
+    items.push({ text, done: false, category: categorySelect.value });
+    input.value = '';
+    input.focus();
+    save();
+    render();
+  }
+
+  function toggle(index) {
+    items[index].done = !items[index].done;
+    save();
+    render();
+  }
+
+  function commitEdit(index, value) {
+    const text = value.trim();
+    editingIndex = -1;
+    if (text) {
+      items[index].text = text;
+    } else {
+      items.splice(index, 1); // 비우면 삭제
+    }
+    save();
+    render();
+  }
+
+  function remove(index) {
+    editingIndex = -1;
+    items.splice(index, 1);
+    save();
+    render();
+  }
+
+  function loadPreset(name) {
+    const preset = PRESETS[name];
+    if (!preset) return;
+    if (items.length > 0) {
+      if (!confirm('현재 목록에 템플릿 항목을 추가할까요?\n(취소하면 기존 목록을 지우고 새로 불러옵니다)')) {
+        items = [];
+      }
+    }
+    preset.forEach(([text, category]) => {
+      items.push({ text, done: false, category });
+    });
+    save();
+    render();
+  }
+
+  /* ===== D-day ===== */
+  function updateDday() {
+    const val = tripDate.value;
+    if (!val) {
+      ddayBadge.className = 'dday-badge empty';
+      ddayBadge.textContent = '여행 날짜를 선택하세요';
+      return;
+    }
+    // 날짜 단위로만 비교 (시간 무시)
+    const trip = new Date(val + 'T00:00:00');
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diff = Math.round((trip - today) / 86400000);
+
+    if (diff > 0) {
+      ddayBadge.className = 'dday-badge';
+      ddayBadge.textContent = '✈️ 여행까지 D-' + diff;
+    } else if (diff === 0) {
+      ddayBadge.className = 'dday-badge';
+      ddayBadge.textContent = '🎉 여행 당일! D-Day';
+    } else {
+      ddayBadge.className = 'dday-badge past';
+      ddayBadge.textContent = '여행 후 D+' + Math.abs(diff);
+    }
+  }
+
+  tripDate.addEventListener('change', () => {
+    localStorage.setItem(DATE_KEY, tripDate.value);
+    updateDday();
+  });
+
+  /* ===== 다크모드 ===== */
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.textContent = '☀️';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      themeBtn.textContent = '🌙';
+    }
+  }
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  }
+
+  /* ===== 이벤트 ===== */
+  addBtn.addEventListener('click', addItem);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addItem();
+  });
+  themeBtn.addEventListener('click', toggleTheme);
+
+  /* ===== 시작 ===== */
+  applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+  tripDate.value = localStorage.getItem(DATE_KEY) || '';
+  updateDday();
+  render();
+</script>
+</body>
+</html>
